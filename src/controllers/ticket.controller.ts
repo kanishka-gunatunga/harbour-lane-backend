@@ -2,6 +2,17 @@ import { Request, Response } from 'express';
 import db from '../models';
 import { Op } from 'sequelize';
 import { emailService } from '../services/email.service';
+import { z } from 'zod';
+
+const createTicketSchema = z.object({
+    customer_name: z.string().min(1, "Customer name is required"),
+    email: z.string().email("Invalid email address"),
+    contact_number: z.string().min(10, "Contact number must be at least 10 digits"),
+    address: z.string().optional(),
+    zip_code: z.string().optional(),
+    inquiry_type: z.enum(['General', 'Complaint', 'Suggestion', 'Technical', 'Inquiry', 'Tech Support', 'Billing']),
+    note: z.string().min(1, "Note is required")
+});
 
 export const listTickets = async (req: Request, res: Response) => {
     try {
@@ -36,6 +47,15 @@ export const createTicket = async (req: Request, res: Response) => {
             inquiry_type,
             note
         } = req.body;
+
+        const validationResult = createTicketSchema.safeParse(req.body);
+
+        if (!validationResult.success) {
+            return res.status(400).json({
+                message: "Validation Error",
+                errors: validationResult.error.format()
+            });
+        }
 
         // 1. Find or Create Customer
         let customer = await (db.Customer as any).findOne({

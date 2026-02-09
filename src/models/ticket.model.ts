@@ -5,7 +5,7 @@ interface TicketAttributes {
     ticket_number: string; // e.g., TKT-123456
     status: 'New' | 'In Review' | 'Processing' | 'Approval' | 'Completed';
     priority: 'Low' | 'Medium' | 'High';
-    category: 'General' | 'Complaint' | 'Suggestion' | 'Technical';
+    category: 'General' | 'Complaint' | 'Suggestion' | 'Technical' | 'Inquiry' | 'Tech Support' | 'Billing';
     description: string;
     customer_id?: number;
     assigned_to?: number; // User ID (Agent)
@@ -20,7 +20,7 @@ export class Ticket extends Model<TicketAttributes, TicketCreationAttributes> im
     public ticket_number!: string;
     public status!: 'New' | 'In Review' | 'Processing' | 'Approval' | 'Completed';
     public priority!: 'Low' | 'Medium' | 'High';
-    public category!: 'General' | 'Complaint' | 'Suggestion' | 'Technical';
+    public category!: 'General' | 'Complaint' | 'Suggestion' | 'Technical' | 'Inquiry' | 'Tech Support' | 'Billing';
     public description!: string;
     public customer_id?: number;
     public assigned_to?: number;
@@ -50,7 +50,7 @@ export const TicketFactory = (sequelize: Sequelize) => {
                 defaultValue: 'Medium',
             },
             category: {
-                type: DataTypes.ENUM('General', 'Complaint', 'Suggestion', 'Technical'),
+                type: DataTypes.ENUM('General', 'Complaint', 'Suggestion', 'Technical', 'Inquiry', 'Tech Support', 'Billing'),
                 allowNull: false,
             },
             description: {
